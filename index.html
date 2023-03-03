@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+</head>
+
+<body>
+    <form>
+        <input type="url" name="url" placeholder="https://example.com" required>
+        <input type="email" name="email" placeholder="example@gmail.com">
+        <input type="text" name="name" maxlength="10" placeholder="name">
+        <textarea name="content" rows="5" cols="33" required></textarea>
+        <input type="submit">
+        <!-- reason -->
+    </form>
+    <script>
+        const urls = {
+            'https://sitelookup.mcafee.com/en/feedback/url?action=checksingle&url=$url': {
+                'product': '01-ts',
+                'comment': '$content'
+            },
+            'https://www.spam404.com/report.html': {
+                '_u167333672875123403': '$url',
+                '_u673594722243333869': '$content'
+            },
+            'https://www.avira.com/en/analysis/submit-url': {
+                'url1': '$url',
+                'comment': '$content'
+            },
+            'https://www.fortiguard.com/faq/wfratingsubmit?url=$url': {
+                'name': '$name',
+                'email': '$email',
+                'comment': '$content'
+            },
+            'https://csi.forcepoint.com/?url=$url': {
+                'message': '$content'
+            },
+            'https://safebrowsing.google.com/safebrowsing/report_phish/?url=$url': {
+                'dq': '$content'
+            },
+            'https://threatcenter.crdf.fr/submit_url.html': {
+                'email_address': '$email',
+                'urls': '$url'
+            },
+            'https://phishing.eset.com/en-us/report?url=$url': {
+                'note': '$content'
+            },
+            'https://www.bitdefender.com/consumer/support/answer/29358/': {
+                'nfo[contact_name]': '$name',
+                'nfo[url]': '$url',
+                'nfo[user_comments]': '$content',
+                'nfo[contact_email]': '$email'
+            },
+            'https://urlfiltering.paloaltonetworks.com/single_cr/?url=$url': {
+                'comment': '$content',
+                'your_email': '$email',
+                'confirm_email': '$email'
+            },
+        };
+
+
+        function replace(string, data) {
+            return string.replace(/\$(.*)/, (_, p) => data.get(p) || '');
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            const data = new FormData(event.target);
+            for (const [urlstring, object] of Object.entries(urls)) {
+                const url = new URL(replace(urlstring, data));
+                for (const [key, value] of Object.entries(object)) {
+                    url.searchParams.append(key, replace(value, data));
+                }
+                window.open(url.toString());
+            }
+
+        }
+
+        const form = document.querySelector('form');
+        form.addEventListener('submit', handleSubmit);
+    </script>
+</body>
+
+</html>
